@@ -1,5 +1,5 @@
 # MessageBird API Client
----
+
 This implementation uses [MessageBird PHP REST API](https://github.com/messagebird/php-rest-api) to send SMS messages.
 
 ## Requirements
