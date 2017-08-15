@@ -1,0 +1,8 @@
+{   
+    "/api/message/sms": { 
+        "POST" : { "controller": "MessagesController", "path": "sendSmsMessage"} 
+    },
+    "/api/getBalance": { 
+        "GET" : { "controller": "BalancesController", "path": "getBalance"} 
+    }    
+}

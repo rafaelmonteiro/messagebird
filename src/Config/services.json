@@ -1,0 +1,22 @@
+{
+    "Messaging": {
+        "class": "Services\\Messaging",
+        "arguments": [ ]
+    },
+    "Balance": {
+        "class": "Services\\Balance",
+        "arguments": [ ]
+    },
+    "JSONResponse": {
+        "class": "Helpers\\JSONResponse",
+        "arguments": [ ]
+    },
+    "JSONRequest": {
+        "class": "Helpers\\JSONRequest",
+        "arguments": [ ]
+    },
+    "ExceptionHandler": {
+        "class": "Helpers\\ExceptionHandler",
+        "arguments": [ ]
+    }
+}
