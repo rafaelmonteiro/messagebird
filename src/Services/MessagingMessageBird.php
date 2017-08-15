@@ -57,10 +57,6 @@ class MessagingMessageBird implements MessagingInterface
        
        if(strlen($totalMsgPartsHex) == 1) $totalMsgPartsHex = "0".$totalMsgPartsHex;
        
-       /* Removed these identifier codes due to encoding errors at mobile device
-        * $identifierCode              = rand(0, 255);
-        * $identifierCodeHex           = dechex($identifierCode);
-        */
        $messageCharIndexStart       = 0;                   
        $UDH                         = [];
        $messagePart                 = '';
