@@ -68,7 +68,7 @@ class MessagesController extends BaseController
     private function _validateInputs()
     {
       foreach($this->request[self::RECIPIENT] as $recipient){
-          if(!filter_var($recipient, FILTER_VALIDATE_INT)){
+          if(!filter_var($recipient, FILTER_VALIDATE_FLOAT)){
               $this->error->formatJson(self::INVALID_RECIPIENT_TYPE, self::INVALID_INTEGER_TYPE, self::INVALID_REQUEST_CODE);
          } 
       }
