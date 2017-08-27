@@ -28,7 +28,7 @@ This implementation uses [MessageBird PHP REST API](https://github.com/messagebi
 | Route	| Method | Description |
 | :--- | :----: | :--- |
 | /api/message/sms | POST | Send a SMS message |
-| /api/getBalance | GET | Show user's balance |
+| /api/user/balance | GET | Show user's balance |
 
 ## API Data Example
 
