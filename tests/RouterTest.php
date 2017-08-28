@@ -7,9 +7,9 @@ use PHPUnit\Framework\TestCase;
  */
 class RouterTest extends TestCase
 {
-    public function testRouterReturnsArraySuccesfulBalancesController()
+    public function testRouterReturnsArraySuccessfulBalancesController()
     {
-        $_SERVER['REQUEST_URI']     = '/api/getBalance';
+        $_SERVER['REQUEST_URI']     = '/api/user/balance';
         $_SERVER['REQUEST_METHOD']  = 'GET';
 
         $this->test = new Helpers\Router;
