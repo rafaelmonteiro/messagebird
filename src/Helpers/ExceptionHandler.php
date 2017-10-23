@@ -1,7 +1,6 @@
 <?php
 
 namespace Helpers;
-use StdClass;
 
 class ExceptionHandler
 {
@@ -15,10 +14,11 @@ class ExceptionHandler
     }
 
     private function _formatResponse($message, $code){
-        $error = new StdClass();
-        $error->data = new StdClass();
-        $error->data->error_message = $message;
-        $error->data->code          = $code;
-        return $error;
+        return ['data'=> 
+            [
+                'error_message' => $message,
+                'code' => $code,
+            ]
+        ];
     }
 }

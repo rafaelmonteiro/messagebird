@@ -17,13 +17,13 @@ class Bootstrap
 
     public function run()
     {
-        $Router            = new Router();
-        $Controller_Method = $Router->useController();
+        $router            = new Router();
+        $controllerMethod = $router->useController();
 
         return call_user_func_array(
             [
-                new $Controller_Method[0](),
-                $Controller_Method[1]
+                new $controllerMethod[0](),
+                $controllerMethod[1]
             ],
             []
        );

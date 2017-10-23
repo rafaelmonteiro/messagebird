@@ -15,7 +15,7 @@ class ServiceContainer
 
     public function get($service)
     {
-        $service     = @$this->services[$service];
+        $service     = $this->services[$service];
         $reflection  = new \ReflectionClass($service["class"]);
 
         foreach ($service["arguments"] as $arg) {

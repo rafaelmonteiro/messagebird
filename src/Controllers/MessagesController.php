@@ -4,7 +4,6 @@ namespace Controllers;
 
 class MessagesController extends BaseController
 {
-    private $ServiceContainer;
     private $request;
     private $response;
     private $error;
@@ -29,10 +28,9 @@ class MessagesController extends BaseController
     public function __construct()
     {
 		    parent::__construct();
-        $this->ServiceContainer = $this->container;        
-        $this->request          = $this->ServiceContainer->get('JSONRequest')->data();
-        $this->response         = $this->ServiceContainer->get('JSONResponse');
-        $this->error            = $this->ServiceContainer->get('ExceptionHandler');
+        $this->request          = $this->container->get('JSONRequest')->data();
+        $this->response         = $this->container->get('JSONResponse');
+        $this->error            = $this->container->get('ExceptionHandler');
     }
 
     public function sendSmsMessage()
@@ -40,7 +38,7 @@ class MessagesController extends BaseController
        $this->_checkInput() ? : $this->error->formatJson(self::FIELDS_ARE_MISSING_MESSAGE, self::FIELDS_MISSING_CODE, self::INVALID_REQUEST_CODE);
        $this->_validateInputs();
 
-       $messaging = $this->ServiceContainer->get('Messaging')->use('messageBird');
+       $messaging = $this->container->get('Messaging')->use('messageBird');
 
        $messaging->composeMessage(
            filter_var($this->request[self::MESSAGE], FILTER_SANITIZE_STRING),
@@ -55,9 +53,9 @@ class MessagesController extends BaseController
 
     private function _checkInput()
     {
-       if(!@$this->request[self::RECIPIENT] 
-            || !@$this->request[self::ORIGINATOR] 
-            || !@$this->request[self::MESSAGE]
+       if(!$this->request[self::RECIPIENT] 
+            || !$this->request[self::ORIGINATOR] 
+            || !$this->request[self::MESSAGE]
        ){
             return false;
        }

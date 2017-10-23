@@ -1,7 +1,6 @@
 <?php
 
 namespace Helpers;
-use StdClass;
 
 class JSONResponse
 {
@@ -39,8 +38,6 @@ class JSONResponse
 
     public function _composeObject($response)
     {
-        $res = new StdClass();
-        $res->data = $response;
-        return json_encode($res);
+        return json_encode(['data'=>$response]);
     }
 }
