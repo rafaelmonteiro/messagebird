@@ -24,11 +24,12 @@ class MessagingMessageBird implements MessagingInterface
     protected $phoneNumbers;
     protected $originator;
     protected $isSingleMessage;
+    protected $binaryMessagesArray;
 
     public function __construct($messageBirdKey)
     {
         $this->MessageBird            = new \MessageBird\Client($messageBirdKey);
-        $this->Message                = new \MessageBird\Objects\Message();
+        $this->Message                = new \Services\Message();
     }
 
     private function _createSMSMessage()
@@ -52,17 +53,17 @@ class MessagingMessageBird implements MessagingInterface
     
     private function _createUDH($message)
     {
-       $totalMsgParts     = ceil(strlen($message)/self::SPLIT_CONCATENATED_MESSAGE_LEN);
-       $totalMsgPartsHex  = dechex($totalMsgParts);
-       
-       if(strlen($totalMsgPartsHex) == 1) $totalMsgPartsHex = "0".$totalMsgPartsHex;
-       
-       $messageCharIndexStart       = 0;                   
-       $UDH                         = [];
-       $messagePart                 = '';
-       $userHeader                  = self::DEFAULT_UDH_HEADER.$totalMsgPartsHex;
+        $totalMsgParts     = ceil(strlen($message)/self::SPLIT_CONCATENATED_MESSAGE_LEN);
+        $totalMsgPartsHex  = dechex($totalMsgParts);
 
-       for ($i = 1; $i <= $totalMsgParts; $i++) {
+        if(strlen($totalMsgPartsHex) == 1) $totalMsgPartsHex = "0".$totalMsgPartsHex;
+
+        $messageCharIndexStart       = 0;                   
+        $UDH                         = [];
+        $messagePart                 = '';
+        $userHeader                  = self::DEFAULT_UDH_HEADER.$totalMsgPartsHex;
+
+        for ($i = 1; $i <= $totalMsgParts; $i++) {
             $messagePart = substr($message, $messageCharIndexStart, self::SPLIT_CONCATENATED_MESSAGE_LEN);
             $messageCharIndexStart += self::SPLIT_CONCATENATED_MESSAGE_LEN;
             $currentMessagePartsNoHex = dechex($i);
@@ -70,9 +71,9 @@ class MessagingMessageBird implements MessagingInterface
             if (strlen($currentMessagePartsNoHex) == 1) $currentMessagePartsNoHex = "0".$currentMessagePartsNoHex;   
 
             array_push($UDH, ['userHeader' => $userHeader.$currentMessagePartsNoHex, 'message' => $messagePart]);
-       }
+        }
 
-       return $UDH;           
+        return $UDH;           
     }
 
     private function _isSingleMessage($message)
@@ -82,30 +83,39 @@ class MessagingMessageBird implements MessagingInterface
 
     public function composeMessage(string $message, array $phoneNumbers, string $originator)
     {
-      $this->message      = $message;
-      $this->phoneNumbers = $phoneNumbers;
-      $this->originator   = $originator;
+        $this->message      = $message;
+        $this->phoneNumbers = $phoneNumbers;
+        $this->originator   = $originator;
+    }
 
-      if($this->_isSingleMessage($message)){ 
-          $this->isSingleMessage = true;
-          return;
-      }
+    public function prepareMessage()
+    {
+        if($this->_isSingleMessage($this->message)){ 
+            $this->isSingleMessage = true;
+            $this->_createSMSMessage();
+            $this->Message->validate();
+        } else {
+            $UDH = $this->_createUDH($this->message);
+
+            foreach ($UDH as $body) {
+                $this->_createBinaryMessage($body['message'], $body['userHeader']);
+                $this->Message->validate();
+                $this->binaryMessagesArray[] = $this->Message;
+            }
+        }
     }
 
     public function send($errorHandler)
     {
         try {
+            $this->prepareMessage();
             if($this->isSingleMessage){
                 $this->_sleep(self::SLEEP_SECONDS);
-                $this->_createSMSMessage();
                 $result = $this->MessageBird->messages->create($this->Message);
             }else{
-                $UDH = $this->_createUDH($this->message);
-
-                foreach ($UDH as $body) {
+                foreach ($this->binaryMessagesArray as $binaryMessage) {
                     $this->_sleep(self::SLEEP_SECONDS);
-                    $this->_createBinaryMessage($body['message'], $body['userHeader']);
-                    $result = $this->MessageBird->messages->create($this->Message);
+                    $result = $this->MessageBird->messages->create($binaryMessage);
                 }
             }
 
@@ -122,7 +132,7 @@ class MessagingMessageBird implements MessagingInterface
 
     private function _sleep($seconds)
     {
-      sleep($seconds);
+        sleep($seconds);
     }
 
 }

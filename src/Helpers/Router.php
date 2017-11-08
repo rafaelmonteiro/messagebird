@@ -20,7 +20,7 @@ class Router
     public function useController()
     {
         $method = $_SERVER['REQUEST_METHOD'];
-        $route  = $this->routes[$this->uri['path']][$method];
+        $route  = ($this->routes[$this->uri['path']][$method]) ?? false;
         $formatedRoute = ($route) ? [self::CONTROLLER_NAMESPACE."\\".$route['controller'], $route['path']] : [self::CONTROLLER_NAMESPACE."\\".self::NOTFOUND_CONTROLLER, 'NotFoundMethod'];
 
         return $formatedRoute;

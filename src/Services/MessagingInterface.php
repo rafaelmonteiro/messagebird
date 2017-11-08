@@ -8,7 +8,7 @@ interface MessagingInterface
         string  $message, 
         array $phoneNumbers, 
         string  $originator 
-   );
+    );
 
     public function send($errorHandler);
 }

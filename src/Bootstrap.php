@@ -3,6 +3,7 @@
 namespace App;
 
 use Helpers\Router;
+use Helpers\ExceptionHandler;
 
 class Bootstrap
 {
@@ -17,15 +18,20 @@ class Bootstrap
 
     public function run()
     {
-        $router            = new Router();
-        $controllerMethod = $router->useController();
+        try {
+            $router           = new Router();
+            $controllerMethod = $router->useController();
 
-        return call_user_func_array(
-            [
-                new $controllerMethod[0](),
-                $controllerMethod[1]
-            ],
-            []
-       );
+            return call_user_func_array(
+                [
+                    new $controllerMethod[0](),
+                    $controllerMethod[1]
+                ],
+                []
+            );
+        } catch (\Throwable $e) {
+            $exceptionHandler = new ExceptionHandler();
+            $exceptionHandler->handle($e);
+        }
     }
 }
